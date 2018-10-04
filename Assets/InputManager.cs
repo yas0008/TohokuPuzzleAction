@@ -16,26 +16,71 @@ public class InputManager : SingletonMonoBehaviour<InputManager>
     public delegate void OnPressRightArrow();
     public OnPressDownArrow onPressRightArrow = () => { };
 
+    public delegate void OnPressSpace();
+    public OnPressSpace onPressSpace = () => { };
+
+    public delegate void OnPressZ();
+    public OnPressSpace onPressZ = () => { };
+
+    public delegate void OnPressX();
+    public OnPressSpace onPressX = () => { };
+
+    public delegate void OnPressC();
+    public OnPressSpace onPressC = () => { };
+
+    public delegate void OnPressA();
+    public OnPressSpace onPressA = () => { };
+
+    new void Awake()
+    {
+        base.Awake();
+    }
+
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
             onPressUpArrow();
         }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.DownArrow))
         {
             onPressDownArrow();
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
             onPressLeftArrow();
         }
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow))
         {
             onPressRightArrow();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            onPressSpace();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            onPressZ();
+        }
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            onPressX();
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            onPressC();
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            onPressA();
         }
 
     }
