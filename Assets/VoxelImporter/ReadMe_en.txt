@@ -37,6 +37,18 @@ twitter: @AlSoSupport
 
 
 [Update History]
+Version 1.1.4p2
+- FIX : VoxelSkinnedAnimationObject : When AnimationType is None, change so that Bone can be added and deleted
+- FIX : Obsolete API
+
+Version 1.1.4p1
+- ADD : Disable Face Editor : Add buttons to manipulate each face collectively
+- ADD : Exsamples : ShareFacialAnimation
+- FIX : DaeExporter : Export from prefab will fail, so it will be invalidated
+- FIX : VoxelFrameAnimationObject : Preview Icon Render
+- FIX : VoxelFrameAnimationObject : FrameListWindow : Fixed an issue that information not necessary for Frame change was added to Animation during Animation recording
+- FIX : VoxelFrameAnimationObject : Fixed not to be cleared when specified frame name can not be found by change from script
+
 Version 1.1.4
 - ADD : Unity2018.2 support
 - ADD : Change the minimum version to Unity 5.6.2

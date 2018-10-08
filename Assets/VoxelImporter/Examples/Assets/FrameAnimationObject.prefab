@@ -832,6 +832,3 @@ MonoBehaviour:
   playMaterial5: {fileID: 0}
   playMaterial6: {fileID: 0}
   playMaterial7: {fileID: 0}
-  edit_animationFoldout: 1
-  edit_frameIndex: 0
-  edit_previewCameraMode: 0

@@ -35,7 +35,7 @@ namespace VoxelImporter
             if (animationTarget == null) return;
 
             base.InspectorGUI();
-            
+
             Action<UnityEngine.Object, string> TypeTitle = (o, title) =>
             {
                 if (o == null)
@@ -179,7 +179,12 @@ namespace VoxelImporter
 
                                     if (prefabType == PrefabType.Prefab)
                                     {
-                                        PrefabUtility.ReplacePrefab(goRoot, PrefabUtility.GetCorrespondingObjectFromSource(goRoot), ReplacePrefabOptions.ConnectToPrefab);
+#if UNITY_2018_2_OR_NEWER
+                                        var prefab = PrefabUtility.GetCorrespondingObjectFromSource(goRoot);
+#else
+                                        var prefab = PrefabUtility.GetPrefabParent(goRoot);
+#endif
+                                        PrefabUtility.ReplacePrefab(goRoot, prefab, ReplacePrefabOptions.ConnectToPrefab);
                                         DestroyImmediate(goRoot);
                                     }
                                 };
@@ -528,7 +533,7 @@ namespace VoxelImporter
                                     if (GUILayout.Button("Configure Avatar", VoxelHumanoidConfigreAvatar.instance == null ? GUI.skin.button : guiStyleBoldActiveButton))
                                     {
                                         if (VoxelHumanoidConfigreAvatar.instance == null)
-                                            VoxelHumanoidConfigreAvatar.Create(animationTarget);    
+                                            VoxelHumanoidConfigreAvatar.Create(animationTarget);
                                         else
                                             VoxelHumanoidConfigreAvatar.instance.Close();
                                     }
@@ -746,6 +751,14 @@ namespace VoxelImporter
                     Debug.LogErrorFormat("<color=green>[Voxel Importer]</color> Export COLLADA(dae) File error. file:{0}", path);
                 }
             });
+        }
+        [MenuItem("CONTEXT/VoxelSkinnedAnimationObject/Export COLLADA(dae) File", true)]
+        private static bool IsValidateExportDaeFile(MenuCommand menuCommand)
+        {
+            var objectTarget = menuCommand.context as VoxelSkinnedAnimationObject;
+            if (objectTarget == null) return false;
+
+            return PrefabUtility.GetPrefabType(objectTarget) != PrefabType.Prefab;
         }
 
         [MenuItem("CONTEXT/VoxelSkinnedAnimationObject/Remove All Voxel Importer Compornent", false, 10100)]

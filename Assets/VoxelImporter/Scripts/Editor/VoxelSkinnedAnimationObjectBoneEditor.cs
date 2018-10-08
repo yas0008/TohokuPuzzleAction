@@ -374,7 +374,8 @@ namespace VoxelImporter
             }
 
             {
-                EditorGUI.BeginDisabledGroup(objectTarget.editMode != VoxelSkinnedAnimationObject.Edit_Mode.None);
+                var disable = objectTarget.rigAnimationType != VoxelSkinnedAnimationObject.RigAnimationType.None && objectTarget.editMode != VoxelSkinnedAnimationObject.Edit_Mode.None;
+                EditorGUI.BeginDisabledGroup(disable);
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.Space();
                 #region Add Child Bone
@@ -439,9 +440,9 @@ namespace VoxelImporter
                 EditorGUILayout.Space();
                 EditorGUILayout.EndHorizontal();
                 EditorGUI.EndDisabledGroup();
-                if (objectTarget.editMode != VoxelSkinnedAnimationObject.Edit_Mode.None)
+                if (disable)
                 {
-                    EditorGUILayout.HelpBox("You can not operate while editing.", MessageType.Info);
+                    EditorGUILayout.HelpBox("If Animation Type is not None, you can not operate while editing.", MessageType.Info);
                 }
             }
 
@@ -1198,17 +1199,6 @@ namespace VoxelImporter
                         {
                             editorBoneEditorWindowRect = GUILayout.Window(EditorGUIUtility.GetControlID(FocusType.Passive, editorBoneEditorWindowRect), editorBoneEditorWindowRect, (id) =>
                             {
-                                #region WeightPreviewMode
-                                {
-                                    EditorGUI.BeginChangeCheck();
-                                    var edit_WeightPreviewMode = (VoxelSkinnedAnimationObject.Edit_WeightPreviewMode)EditorGUILayout.EnumPopup("Preview", objectTarget.edit_WeightPreviewMode);
-                                    if (EditorGUI.EndChangeCheck())
-                                    {
-                                        Undo.RecordObject(objectTarget, "Weight Preview Mode");
-                                        objectTarget.edit_WeightPreviewMode = edit_WeightPreviewMode;
-                                    }
-                                }
-                                #endregion
                                 #region WeightClear
                                 {
                                     if (GUILayout.Button("Clear All Bones Weight"))
@@ -1220,6 +1210,17 @@ namespace VoxelImporter
                                             objectTarget.bones[i].weightData.ClearWeight();
                                         }
                                         UpdateEnableVoxel(false);
+                                    }
+                                }
+                                #endregion
+                                #region WeightPreviewMode
+                                {
+                                    EditorGUI.BeginChangeCheck();
+                                    var edit_WeightPreviewMode = (VoxelSkinnedAnimationObject.Edit_WeightPreviewMode)EditorGUILayout.EnumPopup("Preview", objectTarget.edit_WeightPreviewMode);
+                                    if (EditorGUI.EndChangeCheck())
+                                    {
+                                        Undo.RecordObject(objectTarget, "Weight Preview Mode");
+                                        objectTarget.edit_WeightPreviewMode = edit_WeightPreviewMode;
                                     }
                                 }
                                 #endregion
@@ -1457,19 +1458,6 @@ namespace VoxelImporter
                                     }
                                 }
                                 #endregion
-                                #region WeightPreviewMode
-                                {
-                                    {
-                                        EditorGUI.BeginChangeCheck();
-                                        var edit_WeightPreviewMode = (VoxelSkinnedAnimationObject.Edit_WeightPreviewMode)EditorGUILayout.EnumPopup("Preview", objectTarget.edit_WeightPreviewMode);
-                                        if (EditorGUI.EndChangeCheck())
-                                        {
-                                            Undo.RecordObject(objectTarget, "Weight Preview Mode");
-                                            objectTarget.edit_WeightPreviewMode = edit_WeightPreviewMode;
-                                        }
-                                    }
-                                }
-                                #endregion
                                 #region Mirror
                                 {
                                     EditorGUI.BeginDisabledGroup(boneTarget.mirrorBone == null);
@@ -1492,6 +1480,19 @@ namespace VoxelImporter
                                         boneTarget.weightData.ClearWeight();
                                         boneCore.MirrorBoneWeight();
                                         UpdateEnableVoxel(false);
+                                    }
+                                }
+                                #endregion
+                                #region WeightPreviewMode
+                                {
+                                    {
+                                        EditorGUI.BeginChangeCheck();
+                                        var edit_WeightPreviewMode = (VoxelSkinnedAnimationObject.Edit_WeightPreviewMode)EditorGUILayout.EnumPopup("Preview", objectTarget.edit_WeightPreviewMode);
+                                        if (EditorGUI.EndChangeCheck())
+                                        {
+                                            Undo.RecordObject(objectTarget, "Weight Preview Mode");
+                                            objectTarget.edit_WeightPreviewMode = edit_WeightPreviewMode;
+                                        }
                                     }
                                 }
                                 #endregion

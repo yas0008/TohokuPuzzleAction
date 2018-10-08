@@ -549,52 +549,65 @@ namespace VoxelImporter
             }
         }
 
-        protected void SetPreviewCameraTransform(Transform transform, Bounds bounds)
+        protected void SetPreviewCameraTransform(Bounds bounds)
         {
+            var transform = editorCommon.iconCamera.transform;
+            var sizeMax = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
             switch (objectTarget.edit_previewCameraMode)
             {
             case VoxelFrameAnimationObject.Edit_CameraMode.forward:
                 {
                     var rot = Quaternion.AngleAxis(180f, Vector3.up);
                     transform.localRotation = rot;
-                    transform.localPosition = bounds.center + Vector3.forward * bounds.size.z * 5f;
+                    sizeMax = Mathf.Max(bounds.size.x, bounds.size.y);
+                    transform.localPosition = new Vector3(bounds.center.x, bounds.center.y, bounds.max.z) - transform.forward;
                 }
                 break;
             case VoxelFrameAnimationObject.Edit_CameraMode.back:
                 {
                     transform.localRotation = Quaternion.identity;
-                    transform.localPosition = bounds.center + Vector3.back * bounds.size.z * 5f;
+                    sizeMax = Mathf.Max(bounds.size.x, bounds.size.y);
+                    transform.localPosition = new Vector3(bounds.center.x, bounds.center.y, bounds.min.z) - transform.forward;
                 }
                 break;
             case VoxelFrameAnimationObject.Edit_CameraMode.up:
                 {
                     var rot = Quaternion.AngleAxis(90f, Vector3.right);
                     transform.localRotation = rot;
-                    transform.localPosition = bounds.center + Vector3.up * bounds.size.z * 5f;
+                    sizeMax = Mathf.Max(bounds.size.x, bounds.size.z);
+                    transform.localPosition = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z) - transform.forward;
                 }
                 break;
             case VoxelFrameAnimationObject.Edit_CameraMode.down:
                 {
                     var rot = Quaternion.AngleAxis(-90f, Vector3.right);
                     transform.localRotation = rot;
-                    transform.localPosition = bounds.center + Vector3.down * bounds.size.z * 5f;
+                    sizeMax = Mathf.Max(bounds.size.x, bounds.size.z);
+                    transform.localPosition = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z) - transform.forward;
                 }
                 break;
             case VoxelFrameAnimationObject.Edit_CameraMode.right:
                 {
                     var rot = Quaternion.AngleAxis(-90f, Vector3.up);
                     transform.localRotation = rot;
-                    transform.localPosition = bounds.center + Vector3.right * bounds.size.z * 5f;
+                    sizeMax = Mathf.Max(bounds.size.y, bounds.size.z);
+                    transform.localPosition = new Vector3(bounds.max.x, bounds.center.y, bounds.center.z) - transform.forward;
                 }
                 break;
             case VoxelFrameAnimationObject.Edit_CameraMode.left:
                 {
                     var rot = Quaternion.AngleAxis(90f, Vector3.up);
                     transform.localRotation = rot;
-                    transform.localPosition = bounds.center + Vector3.left * bounds.size.z * 5f;
+                    sizeMax = Mathf.Max(bounds.size.y, bounds.size.z);
+                    transform.localPosition = new Vector3(bounds.min.x, bounds.center.y, bounds.center.z) - transform.forward;
                 }
                 break;
             }
+
+            var camera = editorCommon.iconCamera.GetComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = sizeMax * 0.6f;
+            camera.farClipPlane = 1f + sizeMax * 5f;
         }
 
         protected void UpdateFrameList()
@@ -675,7 +688,7 @@ namespace VoxelImporter
                                 bounds.size = size;
                             }
                             editorCommon.CreateIconObject(objectTarget.transform, mesh, materials);
-                            SetPreviewCameraTransform(editorCommon.iconCamera.transform, bounds);
+                            SetPreviewCameraTransform(bounds);
                             objectTarget.frames[index].icon = editorCommon.IconObjectRender();
                         }
                     }
@@ -824,7 +837,6 @@ namespace VoxelImporter
                     if (list.index < objectTarget.edit_frameIndex)
                         objectTarget.edit_frameIndex--;
                     objectCore.SetCurrentMesh();
-                    editorCommon.previewFrameIndexOld = -1;
                     Refresh();
                     if (VoxelFrameAnimationListWindow.instance != null)
                         VoxelFrameAnimationListWindow.instance.Repaint();
@@ -1020,6 +1032,14 @@ namespace VoxelImporter
             {
                 Debug.LogErrorFormat("<color=green>[Voxel Importer]</color> Export COLLADA(dae) File error. file:{0}", path);
             }
+        }
+        [MenuItem("CONTEXT/VoxelFrameAnimationObject/Export COLLADA(dae) File", true)]
+        private static bool IsValidateExportDaeFile(MenuCommand menuCommand)
+        {
+            var objectTarget = menuCommand.context as VoxelFrameAnimationObject;
+            if (objectTarget == null) return false;
+
+            return PrefabUtility.GetPrefabType(objectTarget) != PrefabType.Prefab;
         }
 
         [MenuItem("CONTEXT/VoxelFrameAnimationObject/Remove All Voxel Importer Compornent", false, 10100)]

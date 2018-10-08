@@ -1,17 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerGroundTrigger : MonoBehaviour
 {
+    [SerializeField] List<int> layers;
+
     void OnTriggerEnter(Collider other)
     {
-        if (gameObject.layer == 13) return;
-        ColliderManager.Instance.RegisiterCollider(ColliderManager.Instance.groundColliders, other);
+        if (layers.Contains(other.gameObject.layer))
+        {
+            //ColliderManager.Instance.RegisiterCollider(ColliderManager.Instance.groundColliders, other);
+        }
     }
     void OnTriggerExit(Collider other)
     {
-        if (gameObject.layer == 13) return;
-        ColliderManager.Instance.UnregisterCollider(ColliderManager.Instance.groundColliders, other);
+        if (layers.Contains(other.gameObject.layer))
+        {
+            //ColliderManager.Instance.UnregisterCollider(ColliderManager.Instance.groundColliders, other);
+        }
     }
 }

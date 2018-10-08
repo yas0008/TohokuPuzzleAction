@@ -21,10 +21,10 @@ TagManager:
   - 
   - Player
   - Terrain
-  - FrozenPlayer
+  - 
   - GroundTrigger
-  - SideTrigger
-  - PlayerInteractive
+  - Target
+  - 
   - 
   - 
   - 

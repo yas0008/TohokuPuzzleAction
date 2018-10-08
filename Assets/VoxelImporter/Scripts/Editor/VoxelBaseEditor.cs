@@ -815,17 +815,6 @@ namespace VoxelImporter
                                     }
                                 }
                                 #endregion
-                                #region PreviewMode
-                                {
-                                    EditorGUI.BeginChangeCheck();
-                                    var edit_ConfigurePreviewMode = (VoxelBase.Edit_ConfigurePreviewMode)EditorGUILayout.EnumPopup("Preview", baseTarget.edit_ConfigurePreviewMode);
-                                    if (EditorGUI.EndChangeCheck())
-                                    {
-                                        Undo.RecordObject(baseTarget, "Preview Mode");
-                                        baseTarget.edit_ConfigurePreviewMode = edit_ConfigurePreviewMode;
-                                    }
-                                }
-                                #endregion
                                 #region Clear
                                 {
                                     if (GUILayout.Button("Clear"))
@@ -834,6 +823,17 @@ namespace VoxelImporter
                                         baseTarget.materialData[baseTarget.edit_configureMaterialIndex].ClearMaterial();
                                         UpdateConfigureEnableMesh();
                                         baseTarget.edit_afterRefresh = true;
+                                    }
+                                }
+                                #endregion
+                                #region PreviewMode
+                                {
+                                    EditorGUI.BeginChangeCheck();
+                                    var edit_ConfigurePreviewMode = (VoxelBase.Edit_ConfigurePreviewMode)EditorGUILayout.EnumPopup("Preview", baseTarget.edit_ConfigurePreviewMode);
+                                    if (EditorGUI.EndChangeCheck())
+                                    {
+                                        Undo.RecordObject(baseTarget, "Preview Mode");
+                                        baseTarget.edit_ConfigurePreviewMode = edit_ConfigurePreviewMode;
                                     }
                                 }
                                 #endregion
@@ -906,6 +906,75 @@ namespace VoxelImporter
                                     }
                                 }
                                 #endregion
+                                #region Set
+                                EditorGUILayout.BeginVertical(GUI.skin.box);
+                                {
+                                    #region All
+                                    {
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.PrefixLabel("All");
+                                        if (GUILayout.Button("Add"))
+                                        {
+                                            Undo.RecordObject(baseTarget, "Add");
+                                            foreach (var voxel in baseTarget.voxelData.voxels)
+                                            {
+                                                var visible = voxel.visible & VoxelBase.FaceAllFlags;
+                                                if (visible == 0) continue;
+                                                baseTarget.disableData.SetDisable(voxel.position, visible);
+                                            }
+                                            UpdateConfigureEnableMesh();
+                                            baseTarget.edit_afterRefresh = true;
+                                        }
+                                        if (GUILayout.Button("Remove"))
+                                        {
+                                            Undo.RecordObject(baseTarget, "Remove");
+                                            baseTarget.disableData.ClearDisable();
+                                            UpdateConfigureEnableMesh();
+                                            baseTarget.edit_afterRefresh = true;
+                                        }
+                                        EditorGUILayout.EndHorizontal();
+                                    }
+                                    #endregion
+                                    #region Faces
+                                    Action<string, VoxelBase.Face> FaceAction = (label, flag) =>
+                                    {
+                                        EditorGUILayout.BeginHorizontal();
+                                        EditorGUILayout.PrefixLabel(label);
+                                        if (GUILayout.Button("Add"))
+                                        {
+                                            Undo.RecordObject(baseTarget, "Add");
+                                            foreach (var voxel in baseTarget.voxelData.voxels)
+                                            {
+                                                var visible = voxel.visible & flag;
+                                                if (visible == 0) continue;
+                                                var face = baseTarget.disableData.GetDisable(voxel.position);
+                                                baseTarget.disableData.SetDisable(voxel.position, face | flag);
+                                            }
+                                            UpdateConfigureEnableMesh();
+                                            baseTarget.edit_afterRefresh = true;
+                                        }
+                                        if (GUILayout.Button("Remove"))
+                                        {
+                                            Undo.RecordObject(baseTarget, "Remove");
+                                            baseTarget.disableData.AllAction((pos, face) =>
+                                            {
+                                                baseTarget.disableData.SetDisable(pos, face & ~flag);
+                                            });
+                                            UpdateConfigureEnableMesh();
+                                            baseTarget.edit_afterRefresh = true;
+                                        }
+                                        EditorGUILayout.EndHorizontal();
+                                    };
+                                    FaceAction("Right", VoxelBase.Face.right);
+                                    FaceAction("Left", VoxelBase.Face.left);
+                                    FaceAction("Up", VoxelBase.Face.up);
+                                    FaceAction("Down", VoxelBase.Face.down);
+                                    FaceAction("Forward", VoxelBase.Face.forward);
+                                    FaceAction("Back", VoxelBase.Face.back);
+                                    #endregion
+                                }
+                                EditorGUILayout.EndVertical();
+                                #endregion
                                 #region PreviewMode
                                 {
                                     EditorGUI.BeginChangeCheck();
@@ -914,17 +983,6 @@ namespace VoxelImporter
                                     {
                                         Undo.RecordObject(baseTarget, "Preview Mode");
                                         baseTarget.edit_ConfigurePreviewMode = edit_ConfigurePreviewMode;
-                                    }
-                                }
-                                #endregion
-                                #region Clear
-                                {
-                                    if (GUILayout.Button("Clear"))
-                                    {
-                                        Undo.RecordObject(baseTarget, "Clear");
-                                        baseTarget.disableData.ClearDisable();
-                                        UpdateConfigureEnableMesh();
-                                        baseTarget.edit_afterRefresh = true;
                                     }
                                 }
                                 #endregion
@@ -1876,7 +1934,12 @@ namespace VoxelImporter
         {
             var prefabType = PrefabUtility.GetPrefabType(go);
             if (prefabType != PrefabType.PrefabInstance) return;
-            var path = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(go));
+#if UNITY_2018_2_OR_NEWER
+            var prefab = PrefabUtility.GetCorrespondingObjectFromSource(go);
+#else
+            var prefab = PrefabUtility.GetPrefabParent(go);
+#endif
+            var path = AssetDatabase.GetAssetPath(prefab);
             if (!PrefabCreateMonitoringAssetModificationProcessor.IsContains(path)) return;
             PrefabCreateMonitoringAssetModificationProcessor.Remove(path);
             VoxelBaseCore.PrefabCreatedGameObjectAdd(go);

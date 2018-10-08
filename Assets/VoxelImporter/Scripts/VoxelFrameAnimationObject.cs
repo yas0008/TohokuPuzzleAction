@@ -145,13 +145,13 @@ namespace VoxelImporter
         }
         public bool ChangeFrame(string frameName)
         {
-            ClearFrame();
             if (!string.IsNullOrEmpty(frameName))
             {
                 foreach (var frame in frames)
                 {
                     if (frame.name == frameName)
                     {
+                        ClearFrame();
                         mesh = frame.mesh;
                         {
                             for (int i = 0; i < frame.materialIndexes.Count; i++)
@@ -177,6 +177,7 @@ namespace VoxelImporter
                     }
                 }
             }
+            Debug.LogWarningFormat("<color=green>[Voxel Importer]</color> Frame not found. <color=red>{0}</color>", frameName);
             return false;
         }
 
@@ -237,8 +238,10 @@ namespace VoxelImporter
             return result;
         }
 
+        [NonSerialized]
         public bool edit_animationFoldout = true;
 
+        [NonSerialized]
         public int edit_frameIndex = -1;
 
         public bool edit_frameEnable { get { return frames != null && edit_frameIndex >= 0 && edit_frameIndex < frames.Count && frames[edit_frameIndex] != null; } }
@@ -253,6 +256,7 @@ namespace VoxelImporter
             right,
             left,
         }
+        [NonSerialized]
         public Edit_CameraMode edit_previewCameraMode;
         
         public void Edit_SetFrameCurrentVoxelOtherData()

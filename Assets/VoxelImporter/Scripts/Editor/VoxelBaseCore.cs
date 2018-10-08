@@ -1532,7 +1532,11 @@ namespace VoxelImporter
             }
             else if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
             {
+#if UNITY_2018_2_OR_NEWER
                 var prefabParent = PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject);
+#else
+                var prefabParent = PrefabUtility.GetPrefabParent(voxelBase.gameObject);
+#endif
                 if (prefabParent != null)
                 {
                     var prefabObject = PrefabUtility.GetPrefabObject(prefabParent);
@@ -4430,7 +4434,13 @@ namespace VoxelImporter
             if (prefabType == PrefabType.Prefab)
                 prefab = voxelBase.gameObject;
             else if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
+            {
+#if UNITY_2018_2_OR_NEWER
                 prefab = PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject);
+#else
+                prefab = PrefabUtility.GetPrefabParent(voxelBase.gameObject);
+#endif
+            }
             else
                 return;
             if (prefab != null)
@@ -4475,7 +4485,14 @@ namespace VoxelImporter
             if (prefabType == PrefabType.Prefab)
                 path = AssetDatabase.GetAssetPath(voxelBase.gameObject);
             else if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
-                path = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject));
+            {
+#if UNITY_2018_2_OR_NEWER
+                var prefab = PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject);
+#else
+                var prefab = PrefabUtility.GetPrefabParent(voxelBase.gameObject);
+#endif
+                path = AssetDatabase.GetAssetPath(prefab);
+            }
             else
                 return;
             var objects = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
@@ -4494,7 +4511,13 @@ namespace VoxelImporter
                     if (prefabType == PrefabType.Prefab)
                         prefabParent = voxelBase.gameObject;
                     else if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
+                    {
+#if UNITY_2018_2_OR_NEWER
                         prefabParent = PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject) as GameObject;
+#else
+                        prefabParent = PrefabUtility.GetPrefabParent(voxelBase.gameObject) as GameObject;
+#endif
+                    }
                     if (prefabParent != null)
                     {
                         while (rootPrefab != prefabParent)
@@ -4560,7 +4583,14 @@ namespace VoxelImporter
                     if (prefabType == PrefabType.Prefab)
                         AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(voxelBase.gameObject));
                     else if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
-                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject)));
+                    {
+#if UNITY_2018_2_OR_NEWER
+                        var prefab = PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject);
+#else
+                        var prefab = PrefabUtility.GetPrefabParent(voxelBase.gameObject);
+#endif
+                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(prefab));
+                    }
                 }
                 PrefabAssetReImport = false;
             }
@@ -4586,7 +4616,12 @@ namespace VoxelImporter
                 var prefabType = PrefabUtility.GetPrefabType(prefabCreatedGameObject[i]);
                 if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
                 {
-                    if (PrefabUtility.GetCorrespondingObjectFromSource(prefabCreatedGameObject[i]) == go)
+#if UNITY_2018_2_OR_NEWER
+                    var prefab = PrefabUtility.GetCorrespondingObjectFromSource(prefabCreatedGameObject[i]);
+#else
+                    var prefab = PrefabUtility.GetPrefabParent(prefabCreatedGameObject[i]);
+#endif
+                    if (prefab == go)
                     {
                         prefabCreatedGameObject.RemoveAt(i--);
                         continue;
@@ -4603,7 +4638,12 @@ namespace VoxelImporter
                 var prefabType = PrefabUtility.GetPrefabType(prefabCreatedGameObject[i]);
                 if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
                 {
-                    if (PrefabUtility.GetCorrespondingObjectFromSource(prefabCreatedGameObject[i]) == go)
+#if UNITY_2018_2_OR_NEWER
+                    var prefab = PrefabUtility.GetCorrespondingObjectFromSource(prefabCreatedGameObject[i]);
+#else
+                    var prefab = PrefabUtility.GetPrefabParent(prefabCreatedGameObject[i]);
+#endif
+                    if (prefab == go)
                         return prefabCreatedGameObject[i];
                 }
             }

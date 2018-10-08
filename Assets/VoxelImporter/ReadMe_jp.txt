@@ -37,6 +37,18 @@ twitter: @AlSoSupport
 
 
 【更新履歴】
+Version 1.1.4p2
+- FIX : VoxelSkinnedAnimationObject : AnimationTypeがNoneの場合にはBoneの追加と削除が可能なように変更
+- FIX : Obsolete API
+
+Version 1.1.4p1
+- ADD : Disable Face Editor : 面ごとまとめて操作するボタンを追加
+- ADD : Exsamples : ShareFacialAnimation
+- FIX : DaeExporter : prefabからの出力は失敗するため無効化
+- FIX : VoxelFrameAnimationObject : PreviewIconレンダリング修正
+- FIX : VoxelFrameAnimationObject : FrameListWindow : Animation記録中にFrame変更に必要のない情報がAnimationに追加される問題の修正
+- FIX : VoxelFrameAnimationObject : スクリプトからの変更で指定フレーム名が見つからない場合にクリアされないように修正
+
 Version 1.1.4
 - ADD : Unity2018.2サポート
 - ADD : 最低バージョンをUnity5.6.2に変更

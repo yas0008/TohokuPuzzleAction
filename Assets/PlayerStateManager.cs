@@ -8,32 +8,26 @@ public class PlayerStateManager : SingletonMonoBehaviour<PlayerStateManager>
 
     public enum PlayerState
     {
+        Ready,
         Air,
         Ground,
-        Climbing,
     }
 
     public void Initialize()
     {
-        state = PlayerState.Air;
+        state = PlayerState.Ready;
     }
 
     public void UpdateState()
     {
-        if (0 < ColliderManager.Instance.sideColliders.Count)
-        {
-            state = PlayerState.Climbing;
-        }
-        else if (0 < ColliderManager.Instance.groundColliders.Count)
-        {
-            state = PlayerState.Ground;
-        }
-        else
-        {
-            state = PlayerState.Air;
-        }
-
-        Debug.Log(state);
+        //if (0 < ColliderManager.Instance.groundColliders.Count)
+        //{
+        //    state = PlayerState.Ground;
+        //}
+        //else
+        //{
+        //    state = PlayerState.Air;
+        //}
     }
 
 }

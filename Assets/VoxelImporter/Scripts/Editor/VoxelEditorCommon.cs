@@ -81,25 +81,13 @@ namespace VoxelImporter
         public Mesh[] previewMesh;
         public Mesh[] cursorMesh;
 
-        #region Preview & Icon
-        public GameObject previewRoot;
-        public RenderTexture previewTexture;
-        public GameObject previewModel;
-        public MeshRenderer previewModelRenderer;
-        public GameObject previewCamera;
-        public Camera previewCameraCamera;
-        public Vector3 previewCameraLookAt;
-        //
+        #region Icon
         public GameObject iconRoot;
         public RenderTexture iconTexture;
         public GameObject iconModel;
         public MeshRenderer iconModelRenderer;
         public GameObject iconCamera;
         public Camera iconCameraCamera;
-        //
-        public int previewFrameIndexOld = -2;
-        public bool previewRepaint;
-        public bool previewMouseDown;
         #endregion
 
         public VoxelEditorCommon(VoxelBase objectTarget, VoxelBaseCore objectCore)
@@ -831,46 +819,7 @@ namespace VoxelImporter
             guiStyleActiveButton.normal = guiStyleActiveButton.active;
         }
 
-        #region Preview & Icon
-        public void InitializePreview()
-        {
-            const string PreviewRootObjectName = "Tmp#VoxelImporterPreview";
-            {
-                var objects = Resources.FindObjectsOfTypeAll<GameObject>();
-                for (int i = 0; i < objects.Length; i++)
-                {
-                    if (objects[i].name == PreviewRootObjectName)
-                        previewRoot = objects[i];
-                }
-            }
-
-            if (previewRoot == null)
-            {
-#if PreviewObjectHide
-                previewRoot = UnityEditor.EditorUtility.CreateGameObjectWithHideFlags(PreviewRootObjectName, HideFlags.HideAndDontSave);
-#else
-                previewRoot = new GameObject(PreviewRootObjectName);
-                previewRoot.hideFlags = HideFlags.DontSave;
-#endif
-            }
-            previewRoot.SetActive(false);
-
-            int blankLayer;
-            for (blankLayer = 31; blankLayer > 0; blankLayer--)
-            {
-                if (string.IsNullOrEmpty(LayerMask.LayerToName(blankLayer)))
-                    break;
-            }
-            if (blankLayer < 0)
-                blankLayer = 31;
-            previewRoot.layer = blankLayer;
-
-            previewTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
-            previewTexture.hideFlags = HideFlags.DontSave;
-            previewTexture.Create();
-
-            CreatePreviewObject();
-        }
+        #region Icon
         public void InitializeIcon()
         {
             const string IconRootObjectName = "Tmp#VoxelImporterIcon";
@@ -912,99 +861,6 @@ namespace VoxelImporter
             CreateIconObject();
         }
 
-        public bool CreatePreviewObject(Transform transform = null, Mesh mesh = null, Material[] materials = null)
-        {
-            if (previewRoot == null) return false;
-
-            if (transform != null)
-            {
-                previewRoot.transform.position = transform.position;
-                previewRoot.transform.rotation = transform.rotation;
-                previewRoot.transform.localScale = Vector3.one;
-            }
-            else
-            {
-                previewRoot.transform.position = Vector3.zero;
-                previewRoot.transform.rotation = Quaternion.identity;
-                previewRoot.transform.localScale = Vector3.one;
-            }
-
-            {
-                const string PreviewModelName = "PreviewModel";
-
-                var previewModelTransform = previewRoot.transform.Find(PreviewModelName);
-                if (previewModelTransform != null)
-                    previewModel = previewModelTransform.gameObject;
-                if (previewModel == null)
-                {
-#if PreviewObjectHide
-                    previewModel = UnityEditor.EditorUtility.CreateGameObjectWithHideFlags(PreviewModelName, HideFlags.HideAndDontSave);
-#else
-                    previewModel = new GameObject(PreviewModelName);
-                    previewModel.hideFlags = HideFlags.DontSave;
-#endif
-                }
-                previewModel.transform.SetParent(previewRoot.transform);
-                previewModel.transform.localPosition = Vector3.zero;
-                previewModel.layer = previewRoot.layer;
-                MeshFilter meshFilter = previewModel.GetComponent<MeshFilter>();
-                if (meshFilter == null)
-                    meshFilter = previewModel.AddComponent<MeshFilter>();
-                meshFilter.sharedMesh = mesh;
-                previewModelRenderer = previewModel.GetComponent<MeshRenderer>();
-                if (previewModelRenderer == null)
-                    previewModelRenderer = previewModel.AddComponent<MeshRenderer>();
-                if (materials != null)
-                    previewModelRenderer.sharedMaterials = materials;
-            }
-            {
-                const string PreviewCameraName = "PreviewCamera";
-                var previewCameraTransform = previewRoot.transform.Find(PreviewCameraName);
-                if (previewCameraTransform != null)
-                    previewCamera = previewCameraTransform.gameObject;
-                if (previewCamera == null)
-                {
-#if PreviewObjectHide
-                    previewCamera = UnityEditor.EditorUtility.CreateGameObjectWithHideFlags(PreviewCameraName, HideFlags.HideAndDontSave);
-#else
-                    previewCamera = new GameObject(PreviewCameraName);
-                    previewCamera.hideFlags = HideFlags.DontSave;
-#endif
-                    previewCameraCamera = previewCamera.AddComponent<Camera>();
-                }
-                else
-                {
-                    previewCameraCamera = previewCamera.GetComponent<Camera>();
-                }
-
-                previewCamera.transform.SetParent(previewRoot.transform);
-                previewCamera.layer = previewRoot.layer;
-                if (mesh != null)
-                {
-                    var rot = Quaternion.AngleAxis(180f, Vector3.up);
-                    previewCamera.transform.localRotation = rot;
-                    previewCamera.transform.localPosition = mesh.bounds.center + Vector3.forward * mesh.bounds.size.z * 5f;
-                    previewCameraLookAt = mesh.bounds.center;
-                }
-                else
-                {
-                    previewCamera.transform.localPosition = Vector3.zero;
-                    previewCamera.transform.localRotation = Quaternion.identity;
-                    previewCameraLookAt = Vector3.zero;
-                }
-                previewCameraCamera.orthographic = true;
-                if (mesh != null)
-                {
-                    previewCameraCamera.orthographicSize = Mathf.Max(mesh.bounds.size.x, Mathf.Max(mesh.bounds.size.y, mesh.bounds.size.z)) * 0.6f;
-                    previewCameraCamera.farClipPlane = Mathf.Max(mesh.bounds.size.x, Mathf.Max(mesh.bounds.size.y, mesh.bounds.size.z)) * 5f;
-                }
-                previewCameraCamera.clearFlags = CameraClearFlags.Color;
-                previewCameraCamera.backgroundColor = new Color(0f, 0f, 0f, 0f);
-                previewCameraCamera.cullingMask = 1 << previewRoot.layer;
-                previewCameraCamera.targetTexture = previewTexture;
-            }
-            return true;
-        }
         public void CreateIconObject(Transform transform = null, Mesh mesh = null, Material[] materials = null)
         {
             if (iconRoot == null) return;
@@ -1097,22 +953,11 @@ namespace VoxelImporter
             }
         }
 
-        public bool IsReadyPreview()
-        {
-            return previewRoot != null && previewModelRenderer != null && previewModelRenderer.sharedMaterials != null;
-        }
         public bool IsReadyIcon()
         {
             return iconRoot != null && iconModelRenderer != null && iconModelRenderer.sharedMaterials != null;
         }
 
-        public void PreviewObjectRender()
-        {
-            if (previewRoot == null) return;
-            previewRoot.SetActive(true);
-            previewCameraCamera.Render();
-            previewRoot.SetActive(false);
-        }
         public Texture2D IconObjectRender()
         {
             if (iconRoot == null) return null;

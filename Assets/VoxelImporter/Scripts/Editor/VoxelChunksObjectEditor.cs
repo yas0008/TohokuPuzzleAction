@@ -611,6 +611,14 @@ namespace VoxelImporter
                 Debug.LogErrorFormat("<color=green>[Voxel Importer]</color> Export COLLADA(dae) File error. file:{0}", path);
             }
         }
+        [MenuItem("CONTEXT/VoxelChunksObject/Export COLLADA(dae) File", true)]
+        private static bool IsValidateExportDaeFile(MenuCommand menuCommand)
+        {
+            var objectTarget = menuCommand.context as VoxelChunksObject;
+            if (objectTarget == null) return false;
+
+            return PrefabUtility.GetPrefabType(objectTarget) != PrefabType.Prefab;
+        }
 
         [MenuItem("CONTEXT/VoxelChunksObject/Remove All Voxel Importer Compornent", false, 10100)]
         private static void RemoveAllVoxelImporterCompornent(MenuCommand menuCommand)

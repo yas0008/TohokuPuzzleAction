@@ -24,9 +24,9 @@ namespace VoxelImporter
         public void Generate()
         {
             if (explosionBase == null || voxelBaseCore.voxelData == null) return;
-            
+
             voxelBaseCore.DestroyUnusedObjectInPrefabObject();
-            
+
             GenerateOnly();
 
             SetMaterialProperties();
@@ -38,7 +38,14 @@ namespace VoxelImporter
                     if (prefabType == PrefabType.Prefab)
                         AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(voxelBase.gameObject));
                     else if (prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance)
-                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject)));
+                    {
+#if UNITY_2018_2_OR_NEWER
+                        var prefab = PrefabUtility.GetCorrespondingObjectFromSource(voxelBase.gameObject);
+#else
+                        var prefab = PrefabUtility.GetPrefabParent(voxelBase.gameObject);
+#endif
+                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(prefab));
+                    }
                 }
                 voxelBaseCore.PrefabAssetReImport = false;
             }
