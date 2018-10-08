@@ -9,6 +9,8 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
     [SerializeField] List<VoxeroidSkill> supportSkills;
     [SerializeField] List<VoxeroidSkill> upSkills;
 
+    int chain = 0;
+
     new void Awake()
     {
         base.Awake();
@@ -16,19 +18,55 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
 
     public void ExecuteSkill(VoxeroidController performer, VoxeroidController supporter)
     {
+        if (chain == 0 && !IsOnPlayable(performer))
+        {
+            return;
+        }
+
+        LevelObjectManager.Instance.LevelStateManager.State = LevelStateManager.LevelState.Unit;
+        chain++;
+
+        var list = new List<VoxeroidController>();
         VoxeroidController up = FindUpVoxeroid(performer);
         if (up != null)
         {
-            supportSkills[(int)performer.type].ExecuteSkill(performer);
+            list = supportSkills[(int)performer.type].ExecuteSkill(performer);
         }
-        else if(supporter != null)
+        else if (supporter != null)
         {
-            upSkills[(int)performer.type].ExecuteSkill(performer);
+            list = upSkills[(int)performer.type].ExecuteSkill(performer);
         }
         else
         {
-            downSkills[(int)performer.type].ExecuteSkill(performer);
+            list = downSkills[(int)performer.type].ExecuteSkill(performer);
         }
+
+        if (list.Count == 0)
+        {
+            LevelObjectManager.Instance.LevelStateManager.State = LevelStateManager.LevelState.Cursor;
+        }
+    }
+
+    bool IsOnPlayable(VoxeroidController performer)
+    {
+        RaycastHit hit = new RaycastHit();
+        if (Physics.Raycast(performer.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
+        {
+            return true;
+        }
+
+        if (Physics.Raycast(performer.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain)))
+        {
+            TerrainBehaviour terrain = hit.collider.gameObject.GetComponentInParent<TerrainBehaviour>();
+            if (terrain != null)
+            {
+                if (terrain.type.Equals(TerrainBehaviour.TerrainType.Playable))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     VoxeroidController FindUpVoxeroid(VoxeroidController voxeroid)
@@ -44,6 +82,11 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
             }
         }
         return null;
+    }
+
+    public void ResetChain()
+    {
+        chain = 0;
     }
 
 }

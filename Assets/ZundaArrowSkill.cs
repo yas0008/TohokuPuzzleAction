@@ -5,24 +5,27 @@ using UnityEngine;
 public class ZundaArrowSkill : VoxeroidSkill
 {
     [SerializeField] float speed;
-    [SerializeField] GameObject projectilePrefab;
+    [SerializeField] Projectile projectilePrefab;
     [SerializeField] GameObject particlePrefab;
 
-    public override void ExecuteSkill(VoxeroidController performer)
+    public override List<VoxeroidController> ExecuteSkill(VoxeroidController performer)
     {
-        var projectile = Instantiate(projectilePrefab, performer.transform.position, performer.transform.rotation * Quaternion.AngleAxis(180, Vector3.up));
+        var projectile = projectilePrefab.CloneProjectile(performer, performer.transform.position, performer.transform.rotation * Quaternion.AngleAxis(180, Vector3.up));
         Destroy(projectile, 5f);
 
         var particle = Instantiate(particlePrefab, performer.transform.position, Quaternion.identity);
         Destroy(particle, 5f);
 
-        FindNextVoxeroid(performer).ForEach(p =>
+        var list = FindNextVoxeroid(performer);
+        list.ForEach(p =>
         {
             p.SetColliderActive(false);
             StartCoroutine(DelayExecuteSkill(p, null, 1f));
         });
 
         performer.GetAnimator(VoxeroidController.VoxeroidType.Zunko).Play("Attack", 0, 0);
+
+        return list;
     }
 
     protected override List<VoxeroidController> FindNextVoxeroid(VoxeroidController voxeroid)

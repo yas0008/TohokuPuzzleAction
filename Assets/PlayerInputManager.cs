@@ -6,14 +6,14 @@ public class PlayerInputManager : AbstractInputManager
 {
     void Start()
     {
-        onPressUpArrow += () => PlayerCursorBehaviour.Instance.Move(Vector3.forward);
-        onPressDownArrow += () => PlayerCursorBehaviour.Instance.Move(Vector3.back);
-        onPressLeftArrow += () => PlayerCursorBehaviour.Instance.Move(Vector3.left);
-        onPressRightArrow += () => PlayerCursorBehaviour.Instance.Move(Vector3.right);
+        onPressUpArrow += () => LevelObjectManager.Instance.Cursor.Move(Vector3.forward);
+        onPressDownArrow += () => LevelObjectManager.Instance.Cursor.Move(Vector3.back);
+        onPressLeftArrow += () => LevelObjectManager.Instance.Cursor.Move(Vector3.left);
+        onPressRightArrow += () => LevelObjectManager.Instance.Cursor.Move(Vector3.right);
 
-        onPressZ += () => PlayerCursorBehaviour.Instance.SwitchVoxeroid();
-        onPressX += () => PlayerCursorBehaviour.Instance.RotateVoxeroid();
-        onPressSpace += () => PlayerCursorBehaviour.Instance.ReleaseVoxeroid();
+        onPressZ += () => LevelObjectManager.Instance.Cursor.SwitchVoxeroid();
+        onPressX += () => LevelObjectManager.Instance.Cursor.RotateVoxeroid();
+        onPressSpace += () => LevelObjectManager.Instance.Cursor.ReleaseVoxeroid();
     }
 
     new void Update()

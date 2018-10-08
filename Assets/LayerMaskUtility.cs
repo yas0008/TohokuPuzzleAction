@@ -12,6 +12,7 @@ public class LayerMaskUtility : SingletonMonoBehaviour<LayerMaskUtility>
         Player,
         Terrain,
         Target,
+        CursorHitBox,
     }
 
     new void Awake()

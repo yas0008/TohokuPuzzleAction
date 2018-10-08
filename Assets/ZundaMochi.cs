@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZundaMochi : MonoBehaviour
+public class ZundaMochi : Projectile
 {
     [SerializeField] Vector3 fallingSpeed;
     ZundaMochiState state;
@@ -25,5 +25,7 @@ public class ZundaMochi : MonoBehaviour
     {
         this.state = state;
     }
+
+
 
 }

@@ -8,7 +8,7 @@ public class ZundaMochiSkill : VoxeroidSkill
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] GameObject particlePrefab;
 
-    public override void ExecuteSkill(VoxeroidController performer)
+    public override List<VoxeroidController> ExecuteSkill(VoxeroidController performer)
     {
         var projectile = Instantiate(projectilePrefab);
         projectile.transform.position = performer.transform.position + performer.GetForward();
@@ -16,16 +16,18 @@ public class ZundaMochiSkill : VoxeroidSkill
         projectile.GetComponent<ZundaMochi>().SetState(ZundaMochi.ZundaMochiState.Falling);
         Destroy(projectile, 5f);
 
-        var particle = Instantiate(particlePrefab) as GameObject;
+        var particle = Instantiate(particlePrefab);
         particle.transform.position = performer.transform.position;
         Destroy(particle, 5f);
 
-        FindNextVoxeroid(performer).ForEach(v =>
+        var list = FindNextVoxeroid(performer);
+        list.ForEach(v =>
         {
             v.SetColliderActive(false);
             StartCoroutine(DelayExecuteSkill(v, null, 1f));
         });
 
+        return list;
     }
 
     protected override List<VoxeroidController> FindNextVoxeroid(VoxeroidController voxeroid)

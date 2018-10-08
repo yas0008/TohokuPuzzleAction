@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KiritanCannonSkill : VoxeroidSkill
 {
-    public override void ExecuteSkill(VoxeroidController voxeroid)
+    public override List<VoxeroidController> ExecuteSkill(VoxeroidController voxeroid)
     {
         throw new System.NotImplementedException();
     }

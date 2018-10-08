@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class VoxeroidSkill : MonoBehaviour
 {
-    public abstract void ExecuteSkill(VoxeroidController voxeroid);
+    public abstract List<VoxeroidController> ExecuteSkill(VoxeroidController voxeroid);
 
     protected abstract List<VoxeroidController> FindNextVoxeroid(VoxeroidController voixeroid);
 

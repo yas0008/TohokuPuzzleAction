@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerCursorBehaviour : SingletonMonoBehaviour<PlayerCursorBehaviour>
+public class PlayerCursorBehaviour : MonoBehaviour
 {
     [SerializeField] Vector3 initialPosition;
     [SerializeField] float spawnHeight;
@@ -22,6 +22,10 @@ public class PlayerCursorBehaviour : SingletonMonoBehaviour<PlayerCursorBehaviou
 
     public void ReleaseVoxeroid()
     {
+        if (!LevelObjectManager.Instance.LevelStateManager.State.Equals(LevelStateManager.LevelState.Cursor))
+            return;
+
+        VoxeroidSkillManager.Instance.ResetChain();
         VoxeroidSkillManager.Instance.ExecuteSkill(voxeroid, null);
         voxeroid.transform.SetParent(null);
         transform.position = CalculatePosition(transform.position);
@@ -56,7 +60,7 @@ public class PlayerCursorBehaviour : SingletonMonoBehaviour<PlayerCursorBehaviou
     Vector3 CalculatePosition(Vector3 position)
     {
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(position + Vector3.up * rayHeight, Vector3.down, out hit, Mathf.Infinity, terrainMask | playerMask))
+        if (Physics.Raycast(position + Vector3.up * rayHeight, Vector3.down, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain) | LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.CursorHitBox)))
         {
             return hit.point + Vector3.up * spawnHeight;
         }
@@ -65,7 +69,7 @@ public class PlayerCursorBehaviour : SingletonMonoBehaviour<PlayerCursorBehaviou
 
     bool IsMoveble(Vector3 position)
     {
-        return Physics.Raycast(position + Vector3.up * rayHeight, Vector3.down, Mathf.Infinity, terrainMask | playerMask);
+        return Physics.Raycast(position + Vector3.up * rayHeight, Vector3.down, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain) | LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.CursorHitBox));
     }
 
     public void Move(Vector3 movement)

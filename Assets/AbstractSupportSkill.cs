@@ -7,14 +7,15 @@ public abstract class AbstractSupportSkill : VoxeroidSkill
 {
     public GameObject particlePrefab;
 
-    public override void ExecuteSkill(VoxeroidController supporter)
+    public override List<VoxeroidController> ExecuteSkill(VoxeroidController supporter)
     {
-        VoxeroidController performer = FindNextVoxeroid(supporter).FirstOrDefault();
+        var list = FindNextVoxeroid(supporter);
+        VoxeroidController performer = list.FirstOrDefault();
 
         if(performer == null)
         {
             Debug.Log("Unexpected Situation");
-            return;
+            return list;
         }
 
         var particle = Instantiate(particlePrefab) as GameObject;
@@ -24,6 +25,8 @@ public abstract class AbstractSupportSkill : VoxeroidSkill
         PerformAnimation();
 
         StartCoroutine(DelayExecuteSkill(performer, supporter, 0.5f));
+
+        return list;
     }
 
     protected override List<VoxeroidController> FindNextVoxeroid(VoxeroidController voxeroid)

@@ -61,4 +61,9 @@ public class VoxeroidController : MonoBehaviour
         return transform.forward * -1;
     }
 
+    public void ApplyTerainEffect()
+    {
+
+    }
+
 }
