@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DG.Tweening;
 
 public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
 {
@@ -25,6 +26,7 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
 
         LevelObjectManager.Instance.LevelStateManager.State = LevelStateManager.LevelState.Unit;
         chain++;
+        GiveTween(performer.gameObject);
 
         var list = new List<VoxeroidController>();
         VoxeroidController up = FindUpVoxeroid(performer);
@@ -87,6 +89,17 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
     public void ResetChain()
     {
         chain = 0;
+    }
+
+    void GiveTween(GameObject target)
+    {
+        Vector3 position = target.transform.position;
+        target.transform
+            .DOMove(Vector3.up * 0.5f, 0.05f, false)
+            .SetRelative()
+            .SetEase(Ease.Linear)
+            .SetLoops(4, LoopType.Yoyo)
+            .OnComplete(() => target.transform.position = position);
     }
 
 }

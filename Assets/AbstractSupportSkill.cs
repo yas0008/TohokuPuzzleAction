@@ -7,6 +7,14 @@ public abstract class AbstractSupportSkill : VoxeroidSkill
 {
     public GameObject particlePrefab;
 
+    public override IEnumerator DelayExecuteSkill(VoxeroidController voxeroid)
+    {
+        yield return new WaitForSeconds(0.5f);
+        var particle = Instantiate(particlePrefab) as GameObject;
+        particle.transform.position = voxeroid.transform.position;
+        Destroy(particle, 5f);
+    }
+
     public override List<VoxeroidController> ExecuteSkill(VoxeroidController supporter)
     {
         var list = FindNextVoxeroid(supporter);
@@ -18,13 +26,8 @@ public abstract class AbstractSupportSkill : VoxeroidSkill
             return list;
         }
 
-        var particle = Instantiate(particlePrefab) as GameObject;
-        particle.transform.position = supporter.transform.position;
-        Destroy(particle, 5f);
-
         PerformAnimation();
-
-        StartCoroutine(DelayExecuteSkill(performer, supporter, 0.5f));
+        StartCoroutine(DelayExecuteNextSkill(performer, supporter, 1f));
 
         return list;
     }

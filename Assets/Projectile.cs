@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
 using DG.Tweening;
 
-public abstract class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour
 {
     public ParticleSystem successParticle;
     public ParticleSystem failedParticle;
     VoxeroidController shooter;
+
+    [SerializeField] float forwardSpeed;
+    [SerializeField] float upSpeed;
+    [SerializeField] float rightSpeed;
+
+    void Update()
+    {
+        transform.position += (transform.forward * forwardSpeed + transform.up * upSpeed + transform.right * rightSpeed) * Time.deltaTime;
+    }
 
     public Projectile CloneProjectile(VoxeroidController shooter, Vector3 position, Quaternion quaternion)
     {
@@ -24,7 +33,6 @@ public abstract class Projectile : MonoBehaviour
             if (shooter.GetInstanceID() != voxeroid.GetInstanceID())
             {
                 SuccessDestroy();
-                GiveTween(other.transform.root.gameObject);
             }
             else
             {
@@ -55,15 +63,6 @@ public abstract class Projectile : MonoBehaviour
         ParticleSystem failed = Instantiate(failedParticle, transform.position, Quaternion.identity);
         failed.Play();
         Destroy(failed.gameObject, 5f);
-    }
-
-    void GiveTween(GameObject target)
-    {
-        target.transform
-            .DOMove(Vector3.up * 0.5f, 0.05f, false)
-            .SetRelative()
-            .SetEase(Ease.Linear)
-            .SetLoops(4, LoopType.Yoyo);
     }
 
 }

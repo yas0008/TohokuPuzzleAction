@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4399424444286890}
-  - component: {fileID: 114951645054701678}
+  - component: {fileID: 114267198318053572}
   - component: {fileID: 65671708901103128}
   - component: {fileID: 54209876013445864}
   m_Layer: 16
@@ -142,7 +142,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.1, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114951645054701678
+--- !u!114 &114267198318053572
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,11 +150,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1209719617151364}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 702855438a7bc9541bdc653e1de8498e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f71126f7b04e614c80b7d299eab0eb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   successParticle: {fileID: 198028449661808378, guid: 55af344c8cc0fd64cb8adf33c8fe9f9f,
     type: 2}
   failedParticle: {fileID: 198028449661808378, guid: 1e2a0a76123aa784b866808e24830a8a,
     type: 2}
-  speed: 3
+  forwardSpeed: 3
+  upSpeed: 0
+  rightSpeed: 0

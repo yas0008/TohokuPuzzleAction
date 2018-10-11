@@ -8,8 +8,9 @@ public class ZundaMochiSkill : VoxeroidSkill
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] GameObject particlePrefab;
 
-    public override List<VoxeroidController> ExecuteSkill(VoxeroidController performer)
+    public override IEnumerator DelayExecuteSkill(VoxeroidController performer)
     {
+        yield return new WaitForSeconds(0.5f);
         var projectile = Instantiate(projectilePrefab);
         projectile.transform.position = performer.transform.position + performer.GetForward();
         projectile.transform.rotation = performer.transform.rotation * Quaternion.AngleAxis(180, Vector3.up);
@@ -19,12 +20,17 @@ public class ZundaMochiSkill : VoxeroidSkill
         var particle = Instantiate(particlePrefab);
         particle.transform.position = performer.transform.position;
         Destroy(particle, 5f);
+    }
+
+    public override List<VoxeroidController> ExecuteSkill(VoxeroidController performer)
+    {
+        StartCoroutine(DelayExecuteSkill(performer));
 
         var list = FindNextVoxeroid(performer);
         list.ForEach(v =>
         {
             v.SetColliderActive(false);
-            StartCoroutine(DelayExecuteSkill(v, null, 1f));
+            StartCoroutine(DelayExecuteNextSkill(v, null, 1.5f));
         });
 
         return list;
