@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class VoxeroidController : MonoBehaviour
 {
-    [SerializeField] List<GameObject> voxeroids;
+    [SerializeField] List<GameObject> models;
+    [SerializeField] List<GameObject> darkModels;
     [SerializeField] List<Animator> animators;
     [SerializeField] Collider playerCollider;
 
@@ -20,17 +22,34 @@ public class VoxeroidController : MonoBehaviour
 
     void Start()
     {
-        SetColliderActive(false);
+        SetVoxeroidActive(true);
+        playerCollider.gameObject.SetActive(false);
     }
 
-    GameObject GetBody(VoxeroidType type)
+    GameObject GetModel(VoxeroidType type)
     {
-        return voxeroids[(int)type];
+        return models[(int)type];
     }
 
-    public void SetColliderActive(bool active)
+    public void SetVoxeroidActive(bool active)
     {
         playerCollider.gameObject.SetActive(active);
+        if (active)
+        {
+            models[(int)type].gameObject.SetActive(true);
+            darkModels[(int)type].gameObject.SetActive(false);
+        }
+        else
+        {
+            StartCoroutine(DelaySetDarkModel());
+        }
+    }
+
+    IEnumerator DelaySetDarkModel()
+    {
+        yield return new WaitForSeconds(1.5f);
+        models[(int)type].gameObject.SetActive(false);
+        darkModels[(int)type].gameObject.SetActive(true);
     }
 
     public Animator GetAnimator(VoxeroidType type)
@@ -41,8 +60,8 @@ public class VoxeroidController : MonoBehaviour
     public void SetVoxeroid(VoxeroidType type)
     {
         this.type = type;
-        voxeroids.ForEach(v => v.gameObject.SetActive(false));
-        GetBody(type).SetActive(true);
+        models.ForEach(v => v.gameObject.SetActive(false));
+        GetModel(type).SetActive(true);
     }
 
     public void RotateCharacter()
@@ -50,9 +69,19 @@ public class VoxeroidController : MonoBehaviour
         transform.rotation = transform.rotation * Quaternion.AngleAxis(90, Vector3.up);
     }
 
-    public void SwitchVoxeroid()
+    public void SwitchVoxeroid(int direction)
     {
-        int target = Enum.GetValues(typeof(VoxeroidType)).Length <= (int)type + 1 ? 0 : (int)type + 1;
+        int target = (int)type + direction;
+
+        if (target < 0)
+        {
+            target = Enum.GetValues(typeof(VoxeroidType)).Length - 1;
+        }
+        else if (Enum.GetValues(typeof(VoxeroidType)).Length <= target)
+        {
+            target = 0;
+        }
+
         SetVoxeroid((VoxeroidType)Enum.ToObject(typeof(VoxeroidType), target));
     }
 
@@ -61,9 +90,22 @@ public class VoxeroidController : MonoBehaviour
         return transform.forward * -1;
     }
 
-    public void ApplyTerainEffect()
+    public Vector3 GetCenter()
     {
-
+        return transform.position + Vector3.up * 0.5f;
     }
 
+    public void TweenModels()
+    {
+        models.ForEach(v =>
+        {
+            Vector3 position = v.transform.position;
+            v.transform
+                .DOMove(Vector3.up * 0.5f, 0.05f, false)
+                .SetRelative()
+                .SetEase(Ease.Linear)
+                .SetLoops(4, LoopType.Yoyo)
+                .OnComplete(() => v.transform.position = position);
+        });
+    }
 }

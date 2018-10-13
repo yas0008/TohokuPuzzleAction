@@ -31,8 +31,36 @@ public abstract class AbstractInputManager : MonoBehaviour
     protected delegate void OnPressA();
     protected OnPressSpace onPressA = () => { };
 
+    public delegate void OnPressMouseLeftButtonDown();
+    public OnPressMouseLeftButtonDown onPressMouseLeftButtonDown = () => { };
+
+    public delegate void OnPressMouseRightButton();
+    public OnPressMouseRightButton onPressMouseRightButton = () => { };
+
+    public delegate void OnScrollMouseWheel(int direction);
+    public OnScrollMouseWheel onScrollMouseWheel = (i) => { };
+
     protected void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            onPressMouseLeftButtonDown();
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            onPressMouseRightButton();
+        }
+
+        if (0 < Input.GetAxis("Mouse ScrollWheel"))
+        {
+            onScrollMouseWheel(1);
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            onScrollMouseWheel(-1);
+        }
+
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             onPressUpArrow();

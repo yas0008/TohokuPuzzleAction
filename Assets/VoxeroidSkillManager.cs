@@ -26,7 +26,7 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
 
         LevelObjectManager.Instance.LevelStateManager.State = LevelStateManager.LevelState.Unit;
         chain++;
-        GiveTween(performer.gameObject);
+        performer.TweenModels();
 
         var list = new List<VoxeroidController>();
         VoxeroidController up = FindUpVoxeroid(performer);
@@ -37,9 +37,11 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
         else if (supporter != null)
         {
             list = upSkills[(int)performer.type].ExecuteSkill(performer);
+            performer.SetVoxeroidActive(false);
         }
         else
         {
+            performer.SetVoxeroidActive(false);
             list = downSkills[(int)performer.type].ExecuteSkill(performer);
         }
 
@@ -51,13 +53,14 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
 
     bool IsOnPlayable(VoxeroidController performer)
     {
-        RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(performer.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
+        Ray ray = new Ray(performer.GetCenter(), Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
         {
             return true;
         }
 
-        if (Physics.Raycast(performer.transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain)))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain)))
         {
             TerrainBehaviour terrain = hit.collider.gameObject.GetComponentInParent<TerrainBehaviour>();
             if (terrain != null)
@@ -73,9 +76,10 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
 
     VoxeroidController FindUpVoxeroid(VoxeroidController voxeroid)
     {
-        RaycastHit hit = new RaycastHit();
+        Ray ray = new Ray(voxeroid.GetCenter(), Vector3.up);
+        RaycastHit hit;
 
-        if (Physics.Raycast(voxeroid.transform.position, Vector3.up, out hit, 1f, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
+        if (Physics.Raycast(ray, out hit, 1f, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
         {
             VoxeroidController target = hit.collider.gameObject.GetComponentInParent<VoxeroidController>();
             if (target != null)
@@ -89,17 +93,6 @@ public class VoxeroidSkillManager : SingletonMonoBehaviour<VoxeroidSkillManager>
     public void ResetChain()
     {
         chain = 0;
-    }
-
-    void GiveTween(GameObject target)
-    {
-        Vector3 position = target.transform.position;
-        target.transform
-            .DOMove(Vector3.up * 0.5f, 0.05f, false)
-            .SetRelative()
-            .SetEase(Ease.Linear)
-            .SetLoops(4, LoopType.Yoyo)
-            .OnComplete(() => target.transform.position = position);
     }
 
 }

@@ -7,7 +7,6 @@ using UnityEngine;
 public class PlayerCursorBehaviour : MonoBehaviour
 {
     [SerializeField] Vector3 initialPosition;
-    [SerializeField] float spawnHeight;
     [SerializeField] float rayHeight;
     [SerializeField] LayerMask terrainMask;
     [SerializeField] LayerMask playerMask;
@@ -25,20 +24,28 @@ public class PlayerCursorBehaviour : MonoBehaviour
         if (!LevelObjectManager.Instance.LevelStateManager.State.Equals(LevelStateManager.LevelState.Cursor))
             return;
 
-        VoxeroidSkillManager.Instance.ResetChain();
-        VoxeroidSkillManager.Instance.ExecuteSkill(voxeroid, null);
         voxeroid.transform.SetParent(null);
-        transform.position = CalculatePosition(transform.position);
         FindObjectsOfType<VoxeroidController>()
             .ToList()
-            .ForEach(v => v.SetColliderActive(true));
+            .ForEach(v => v.SetVoxeroidActive(true));
+
+        VoxeroidSkillManager.Instance.ResetChain();
+        VoxeroidSkillManager.Instance.ExecuteSkill(voxeroid, null);
+
+        StartCoroutine(DelayGenerateVoxeroid());
+
+    }
+
+    IEnumerator DelayGenerateVoxeroid()
+    {
+        yield return new WaitForSeconds(0.5f);
         GenerateVoxeroid();
     }
 
     void GenerateVoxeroid()
     {
         VoxeroidController newVoxeroid = PlayersManager.Instance.GenerateVoxeroid(VoxeroidController.VoxeroidType.Zunko);
-        if(voxeroid != null)
+        if (voxeroid != null)
         {
             newVoxeroid.transform.root.transform.rotation = voxeroid.transform.root.transform.rotation;
         }
@@ -52,33 +59,19 @@ public class PlayerCursorBehaviour : MonoBehaviour
         voxeroid.RotateCharacter();
     }
 
-    public void SwitchVoxeroid()
+    public void SwitchVoxeroid(int direction)
     {
-        voxeroid.SwitchVoxeroid();
+        voxeroid.SwitchVoxeroid(direction);
     }
 
     Vector3 CalculatePosition(Vector3 position)
     {
-        RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(position + Vector3.up * rayHeight, Vector3.down, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain) | LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.CursorHitBox)))
+        Ray ray = new Ray(position + Vector3.up * rayHeight, Vector3.down);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain)))
         {
-            return hit.point + Vector3.up * spawnHeight;
+            return hit.point;
         }
         return Vector3.zero;
-    }
-
-    bool IsMoveble(Vector3 position)
-    {
-        return Physics.Raycast(position + Vector3.up * rayHeight, Vector3.down, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain) | LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.CursorHitBox));
-    }
-
-    public void Move(Vector3 movement)
-    {
-        if (IsMoveble(transform.position + movement))
-        {
-            Vector3 toMove = transform.position + movement;
-            toMove = new Vector3(Mathf.RoundToInt(toMove.x), Mathf.RoundToInt(toMove.y), Mathf.RoundToInt(toMove.z));
-            transform.position = CalculatePosition(toMove);
-        }
     }
 }

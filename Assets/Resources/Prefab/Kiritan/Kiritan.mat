@@ -6,12 +6,12 @@ Material:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: ZunkoStandard
+  m_Name: Kiritan
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _IS_BLENDADDTOMATCAP_ON _IS_LIGHTCOLOR_1ST_SHADE_ON
     _IS_LIGHTCOLOR_2ND_SHADE_ON _IS_LIGHTCOLOR_AP_RIMLIGHT_ON _IS_LIGHTCOLOR_BASE_ON
     _IS_LIGHTCOLOR_HIGHCOLOR_ON _IS_LIGHTCOLOR_MATCAP_ON _IS_LIGHTCOLOR_RIMLIGHT_ON
-    _OUTLINE_NML _SET_SYSTEMSHADOWSTOBASE_ON _SPECULARHIGHLIGHTS_OFF
+    _SET_SYSTEMSHADOWSTOBASE_ON _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -22,19 +22,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _1st_ShadeMap:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _2nd_ShadeMap:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _BakedNormal:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -58,19 +54,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Emissive_Tex:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HighColor_Tex:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap_Sampler:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -78,22 +74,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6bf0b45e3d53f3443a41be56dcede4ec, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapForMatCap:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OutlineTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Outline_Sampler:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -102,19 +90,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Set_HighColorMask:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Set_MatcapMask:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Set_RimLightMask:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ShadingGradeMap:
-        m_Texture: {fileID: 2800000, guid: 6d9be33846acc9f41b09495b4e7341dd, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9d1cea584708d034392bee508da1a1fa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -130,17 +118,14 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Farthest_Distance: 10
     - _GI_Intensity: 0
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _HighColor_Power: 0
     - _Is_1st_ShadeColorOnly: 0
-    - _Is_BakedNormal: 0
     - _Is_BlendAddToHiColor: 0
     - _Is_BlendAddToMatCap: 1
-    - _Is_BlendBaseColor: 0
     - _Is_LightColor_1st_Shade: 1
     - _Is_LightColor_2nd_Shade: 1
     - _Is_LightColor_Ap_RimLight: 1
@@ -152,7 +137,6 @@ Material:
     - _Is_NormalMapForMatCap: 0
     - _Is_NormalMapToHighColor: 0
     - _Is_NormalMapToRimLight: 0
-    - _Is_OutlineTex: 0
     - _Is_SpecularToHighColor: 0
     - _Is_UseTweakHighColorOnShadow: 0
     - _Is_UseTweakMatCapOnShadow: 0
@@ -160,11 +144,7 @@ Material:
     - _MatCap: 0
     - _Metallic: 0
     - _Mode: 0
-    - _Nearest_Distance: 0.5
-    - _OUTLINE: 0
     - _OcclusionStrength: 1
-    - _Offset_Z: 0
-    - _Outline_Width: 1
     - _Parallax: 0.02
     - _RimLight: 0
     - _RimLight_FeatherOff: 0
@@ -193,9 +173,8 @@ Material:
     - _Ap_RimLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 0.9019608, g: 0.9019608, b: 0.9019608, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emissive_Color: {r: 0, g: 0, b: 0, a: 1}
-    - _HighColor: {r: 1, g: 1, b: 1, a: 1}
+    - _HighColor: {r: 0, g: 0, b: 0, a: 1}
     - _MatCapColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Outline_Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}

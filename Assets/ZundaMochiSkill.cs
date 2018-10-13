@@ -5,20 +5,19 @@ using UnityEngine;
 public class ZundaMochiSkill : VoxeroidSkill
 {
     [SerializeField] LayerMask layerMask;
-    [SerializeField] GameObject projectilePrefab;
-    [SerializeField] GameObject particlePrefab;
+    [SerializeField] Projectile projectilePrefab;
+    [SerializeField] ParticleSystem particlePrefab;
 
     public override IEnumerator DelayExecuteSkill(VoxeroidController performer)
     {
         yield return new WaitForSeconds(0.5f);
         var projectile = Instantiate(projectilePrefab);
-        projectile.transform.position = performer.transform.position + performer.GetForward();
+        projectile.transform.position = performer.GetCenter() + performer.GetForward();
         projectile.transform.rotation = performer.transform.rotation * Quaternion.AngleAxis(180, Vector3.up);
-        projectile.GetComponent<ZundaMochi>().SetState(ZundaMochi.ZundaMochiState.Falling);
         Destroy(projectile, 5f);
 
         var particle = Instantiate(particlePrefab);
-        particle.transform.position = performer.transform.position;
+        particle.transform.position = performer.GetCenter();
         Destroy(particle, 5f);
     }
 
@@ -29,7 +28,6 @@ public class ZundaMochiSkill : VoxeroidSkill
         var list = FindNextVoxeroid(performer);
         list.ForEach(v =>
         {
-            v.SetColliderActive(false);
             StartCoroutine(DelayExecuteNextSkill(v, null, 1.5f));
         });
 
@@ -41,7 +39,7 @@ public class ZundaMochiSkill : VoxeroidSkill
         List<VoxeroidController> list = new List<VoxeroidController>();
         RaycastHit hit = new RaycastHit();
 
-        if (Physics.Raycast(voxeroid.transform.position + voxeroid.GetForward() + Vector3.up, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(voxeroid.GetCenter() + voxeroid.GetForward() + Vector3.up, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
             VoxeroidController target = hit.collider.gameObject.transform.root.GetComponent<VoxeroidController>();
             if (target != null)

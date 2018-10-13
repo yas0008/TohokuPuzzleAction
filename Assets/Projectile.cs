@@ -25,6 +25,8 @@ public class Projectile : MonoBehaviour
 
     protected void OnTriggerEnter(Collider other)
     {
+        Debug.Log(1);
+
         var voxeroid = other.gameObject.transform.root.GetComponent<VoxeroidController>();
         var target = other.gameObject.transform.root.GetComponent<Target>();
 

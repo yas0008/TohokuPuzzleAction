@@ -5,14 +5,13 @@ using UnityEngine;
 
 public abstract class AbstractSupportSkill : VoxeroidSkill
 {
-    public GameObject particlePrefab;
+    public ParticleSystem particlePrefab;
 
     public override IEnumerator DelayExecuteSkill(VoxeroidController voxeroid)
     {
         yield return new WaitForSeconds(0.5f);
-        var particle = Instantiate(particlePrefab) as GameObject;
-        particle.transform.position = voxeroid.transform.position;
-        Destroy(particle, 5f);
+        var particle = Instantiate(particlePrefab, voxeroid.GetCenter(), Quaternion.identity);
+        Destroy(particle.gameObject, 5f);
     }
 
     public override List<VoxeroidController> ExecuteSkill(VoxeroidController supporter)
@@ -37,7 +36,7 @@ public abstract class AbstractSupportSkill : VoxeroidSkill
         List<VoxeroidController> list = new List<VoxeroidController>();
         RaycastHit hit = new RaycastHit();
 
-        if (Physics.Raycast(voxeroid.transform.position, Vector3.up, out hit, 1f, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
+        if (Physics.Raycast(voxeroid.GetCenter(), Vector3.up, out hit, 1f, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
         {
             VoxeroidController target = hit.collider.gameObject.transform.root.GetComponent<VoxeroidController>();
             if (target != null)

@@ -10,18 +10,16 @@ public class KiritanCannonSkill : VoxeroidSkill
     public override IEnumerator DelayExecuteSkill(VoxeroidController voxeroid)
     {
         yield return new WaitForSeconds(1.2f);
-        var pos1 = voxeroid.transform.position + voxeroid.GetForward() + Vector3.down * 0.5f + voxeroid.transform.right;
-        var pos2 = voxeroid.transform.position + voxeroid.GetForward() + Vector3.down * 0.5f + voxeroid.transform.right * -1;
+        var positions = new List<Vector3>();
+        positions.Add(voxeroid.GetCenter() + voxeroid.GetForward() + Vector3.down * 0.5f + voxeroid.transform.right);
+        positions.Add(voxeroid.GetCenter() + voxeroid.GetForward() + Vector3.down * 0.5f - voxeroid.transform.right);
 
-        var particle1 = Instantiate(particlePrefab, pos1, Quaternion.identity);
-        var particle2 = Instantiate(particlePrefab, pos2, Quaternion.identity);
-        Destroy(particle1.gameObject, 5f);
-        Destroy(particle2.gameObject, 5f);
+        positions.ForEach(p =>
+        {
+            Destroy(Instantiate(particlePrefab, p, Quaternion.identity).gameObject, 5f);
+            Destroy(projectilePrefab.CloneProjectile(voxeroid, p + Vector3.up * 0.5f, Quaternion.identity).gameObject, 5f);
+        });
 
-        var projectile1 = projectilePrefab.CloneProjectile(voxeroid, pos1 + Vector3.up * 0.5f, Quaternion.identity);
-        var projectile2 = projectilePrefab.CloneProjectile(voxeroid, pos2 + Vector3.up * 0.5f, Quaternion.identity);
-        Destroy(projectile1, 5f);
-        Destroy(projectile2, 5f);
     }
 
     public override List<VoxeroidController> ExecuteSkill(VoxeroidController voxeroid)
@@ -32,7 +30,6 @@ public class KiritanCannonSkill : VoxeroidSkill
 
         targets.ForEach(p =>
         {
-            p.SetColliderActive(false);
             StartCoroutine(DelayExecuteNextSkill(p, null, 1.5f));
         });
 
@@ -44,19 +41,17 @@ public class KiritanCannonSkill : VoxeroidSkill
         var list = new List<VoxeroidController>();
 
         var positions = new List<Vector3>();
-        positions.Add(voxeroid.transform.position + voxeroid.GetForward() + Vector3.up + voxeroid.transform.right);
-        positions.Add(voxeroid.transform.position + voxeroid.GetForward() + Vector3.up + voxeroid.transform.right * -1);
+        positions.Add(voxeroid.GetCenter() + voxeroid.GetForward() + Vector3.up + voxeroid.transform.right);
+        positions.Add(voxeroid.GetCenter() + voxeroid.GetForward() + Vector3.up - voxeroid.transform.right);
 
         positions.ForEach(p =>
         {
-            Debug.Log(p);
             RaycastHit hit = new RaycastHit();
             if (Physics.Raycast(p, Vector3.down, out hit, 0.6f, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
             {
                 VoxeroidController target = hit.collider.gameObject.transform.root.GetComponent<VoxeroidController>();
                 if (target != null)
                 {
-                    Debug.Log(target.name);
                     list.Add(target);
                 }
             }

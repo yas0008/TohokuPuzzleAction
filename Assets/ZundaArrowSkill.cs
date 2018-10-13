@@ -8,15 +8,22 @@ public class ZundaArrowSkill : VoxeroidSkill
     [SerializeField] Projectile projectilePrefab;
     [SerializeField] GameObject particlePrefab;
 
+    LayerMask mask;
+
+    private void Start()
+    {
+        mask = LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player) | LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Terrain);
+    }
+
     public override IEnumerator DelayExecuteSkill(VoxeroidController performer)
     {
         yield return new WaitForSeconds(0.5f);
 
-        var projectile = projectilePrefab.CloneProjectile(performer, performer.transform.position, performer.transform.rotation * Quaternion.AngleAxis(180, Vector3.up));
-        Destroy(projectile, 5f);
+        var projectile = projectilePrefab.CloneProjectile(performer, performer.GetCenter(), performer.transform.rotation * Quaternion.AngleAxis(180, Vector3.up));
+        Destroy(projectile.gameObject, 5f);
 
-        var particle = Instantiate(particlePrefab, performer.transform.position, Quaternion.identity);
-        Destroy(particle, 5f);
+        var particle = Instantiate(particlePrefab, performer.GetCenter(), Quaternion.identity);
+        Destroy(particle.gameObject, 5f);
     }
 
     public override List<VoxeroidController> ExecuteSkill(VoxeroidController performer)
@@ -26,7 +33,6 @@ public class ZundaArrowSkill : VoxeroidSkill
         var list = FindNextVoxeroid(performer);
         list.ForEach(p =>
         {
-            p.SetColliderActive(false);
             StartCoroutine(DelayExecuteNextSkill(p, null, 1.5f));
         });
 
@@ -38,16 +44,23 @@ public class ZundaArrowSkill : VoxeroidSkill
     protected override List<VoxeroidController> FindNextVoxeroid(VoxeroidController voxeroid)
     {
         List<VoxeroidController> list = new List<VoxeroidController>();
-        RaycastHit hit = new RaycastHit();
 
-        if (Physics.Raycast(voxeroid.transform.position, voxeroid.transform.forward * -1, out hit, Mathf.Infinity, LayerMaskUtility.Instance.GetLayerMask(LayerMaskUtility.LayerName.Player)))
+        RaycastHit hit;
+        Ray ray = new Ray(voxeroid.GetCenter() + voxeroid.GetForward() * 0.5f, voxeroid.GetForward());
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, mask))
         {
-            VoxeroidController target = hit.collider.gameObject.transform.root.GetComponent<VoxeroidController>();
-            if (target != null)
+            int layer = hit.collider.gameObject.layer;
+            if (layer == LayerMaskUtility.Instance.GetLayerNumber(LayerMaskUtility.LayerName.Terrain))
             {
-                list.Add(target);
+                //NothingToDo
+            }
+            else if(layer == LayerMaskUtility.Instance.GetLayerNumber(LayerMaskUtility.LayerName.Player))
+            {
+                list.Add(hit.collider.GetComponentInParent<VoxeroidController>());
             }
         }
         return list;
     }
+
 }
